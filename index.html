@@ -7,135 +7,202 @@
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: var(--tg-theme-bg-color, #ffffff);
-            --text-color: var(--tg-theme-text-color, #222222);
-            --button-color: var(--tg-theme-button-color, #3390ec);
-            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
-            --hint-color: var(--tg-theme-hint-color, #999999);
-        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0; padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #17212b;
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
         }
-        h2 { margin-top: 0; text-align: center; font-size: 20px; }
-        .grid {
+
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .products-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 20px;
         }
-        .card {
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 10px;
+
+        .product-card {
+            background-color: #242f3d;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 8px;
             text-align: center;
-            background: rgba(0,0,0,0.02);
             cursor: pointer;
-            transition: transform 0.1s ease;
+            transition: all 0.2s;
         }
-        .card:active { transform: scale(0.98); }
-        .card img {
-            width: 100%; height: 110px;
-            object-fit: cover; border-radius: 8px;
+
+        .product-card.selected {
+            border-color: #64b5f6;
+            background-color: #2b5278;
         }
-        .card h4 { margin: 8px 0 4px; font-size: 14px; }
-        .card p { color: var(--button-color); font-weight: bold; margin: 0 0 8px; font-size: 13px; }
-        .btn {
-            background: var(--button-color);
-            color: var(--button-text-color);
-            border: none; padding: 8px 12px;
-            border-radius: 6px; width: 100%;
-            cursor: pointer; font-size: 12px; font-weight: 600;
+
+        .product-card img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 6px;
         }
-        #order-form {
-            display: none;
-            background: rgba(0,0,0,0.03);
+
+        .product-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin: 6px 0 2px 0;
+        }
+
+        .product-price {
+            font-size: 11px;
+            color: #64b5f6;
+            margin-bottom: 6px;
+        }
+
+        .select-btn {
+            background-color: #2b5278;
+            color: #fff;
+            border: none;
+            padding: 6px;
+            border-radius: 6px;
+            width: 100%;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: #aaaaaa;
+            margin-bottom: 4px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #242f3d;
+            border: 1px solid #384758;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 70px;
+            resize: none;
+        }
+
+        .send-btn {
+            background-color: #5288c1;
+            color: white;
+            border: none;
             padding: 14px;
-            border-radius: 12px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
             margin-top: 10px;
         }
-        .form-group { margin-bottom: 10px; }
-        label { display: block; font-size: 12px; color: var(--hint-color); margin-bottom: 4px; }
-        input, textarea {
-            width: 100%; padding: 10px;
-            border: 1px solid #ccc; border-radius: 8px;
-            box-sizing: border-box; font-size: 14px;
+
+        .send-btn:active {
+            background-color: #43709e;
         }
     </style>
 </head>
 <body>
+
     <h2>🎨 Poligrafiya Katalogi</h2>
-    
-    <div class="grid">
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=300" alt="Taklifnoma">
-            <h4>Premium Taklifnoma</h4>
-            <p>12 000 UZS</p>
-            <button class="btn" onclick="selectItem('Premium Taklifnoma', 12000)">Tanlash</button>
+
+    <div class="products-grid">
+        <div class="product-card" onclick="selectProduct('Premium Taklifnoma', 12000, this)">
+            <img src="https://picsum.photos/200/150?random=1" alt="Premium">
+            <div class="product-title">Premium Taklifnoma</div>
+            <div class="product-price">12 000 UZS</div>
+            <button class="select-btn">Tanlash</button>
         </div>
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=300" alt="Minimalist">
-            <h4>Minimalist Style</h4>
-            <p>8 000 UZS</p>
-            <button class="btn" onclick="selectItem('Minimalist Style', 8000)">Tanlash</button>
+        <div class="product-card" onclick="selectProduct('Minimalist Style', 8000, this)">
+            <img src="https://picsum.photos/200/150?random=2" alt="Minimalist">
+            <div class="product-title">Minimalist Style</div>
+            <div class="product-price">8 000 UZS</div>
+            <button class="select-btn">Tanlash</button>
         </div>
     </div>
 
-    <div id="order-form">
-        <h3 style="margin-top: 0; font-size: 16px;">✏️ Buyurtma tafsilotlari</h3>
-        <div class="form-group">
-            <label>Tanlangan Mahsulot:</label>
-            <input type="text" id="product_name" readonly style="background: #eee;">
-        </div>
-        <div class="form-group">
-            <label>Kelin va Kuyov ismlari:</label>
-            <input type="text" id="names" placeholder="Masalan: Ali va Laylo">
-        </div>
-        <div class="form-group">
-            <label>Sana va Manzil:</label>
-            <textarea id="details" rows="3" placeholder="Sana, soat va restoran nomi..."></textarea>
-        </div>
+    <h3>✏️ Buyurtma tafsilotlari</h3>
+
+    <div class="form-group">
+        <label>Tanlangan Mahsulot:</label>
+        <input type="text" id="selectedProduct" readonly placeholder="Mahsulotni tanlang">
     </div>
+
+    <div class="form-group">
+        <label>Kelin va Kuyov ismlari:</label>
+        <input type="text" id="names" placeholder="Masalan: Behzod va Madina">
+    </div>
+
+    <div class="form-group">
+        <label>Sana va Manzil:</label>
+        <textarea id="details" placeholder="Sana, soat va restoran manzilini kiriting"></textarea>
+    </div>
+
+    <button class="send-btn" onclick="sendData()">BUYURTMANI YUBORISH</button>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand(); // Mini App'ni to'liq ekranga yoyish
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-        let selectedProduct = null;
+        let selectedProductName = '';
+        let selectedProductPrice = 0;
 
-        function selectItem(name, price) {
-            selectedProduct = { name, price };
-            document.getElementById('product_name').value = `${name} (${price} UZS)`;
-            document.getElementById('order-form').style.display = 'block';
-            
-            // Telegram pastki tugmasini (MainButton) yoqish
-            tg.MainButton.setText("BUYURTMANI YUBORISH");
-            tg.MainButton.show();
+        function selectProduct(name, price, element) {
+            selectedProductName = name;
+            selectedProductPrice = price;
+
+            document.querySelectorAll('.product-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+
+            document.getElementById('selectedProduct').value = `${name} (${price} UZS)`;
         }
 
-        // Pastdagi yuborish tugmasi bosilganda
-        tg.onEvent('mainButtonClicked', function(){
-            const names = document.getElementById('names').value;
-            const details = document.getElementById('details').value;
+        function sendData() {
+            let names = document.getElementById('names').value.trim();
+            let details = document.getElementById('details').value.trim();
 
-            if(!names || !details) {
-                tg.showAlert("Iltimos, barcha maydonlarni to'ldiring!");
+            if (!selectedProductName) {
+                alert('Iltimos, avval mahsulotni tanlang!');
                 return;
             }
 
-            const data = {
-                product: selectedProduct.name,
-                price: selectedProduct.price,
+            if (!names) {
+                alert('Iltimos, ismlarni kiriting!');
+                return;
+            }
+
+            let data = {
+                product: selectedProductName,
+                price: selectedProductPrice,
                 names: names,
                 details: details
             };
 
-            // Ma'lumotni Telegram Botga yuborish
-            tg.sendData(JSON.stringify(data));
-        });
+            // Telegram botga ma'lumot yuborish
+            try {
+                tg.sendData(JSON.stringify(data));
+                tg.close();
+            } catch (e) {
+                alert('Xatolik: ' + e.message);
+            }
+        }
     </script>
 </body>
 </html>
