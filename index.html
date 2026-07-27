@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poligrafiya Katalogi</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #ffffff);
+            --text-color: var(--tg-theme-text-color, #222222);
+            --button-color: var(--tg-theme-button-color, #3390ec);
+            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+            --hint-color: var(--tg-theme-hint-color, #999999);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 16px;
+        }
+        h2 { margin-top: 0; text-align: center; font-size: 20px; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            background: rgba(0,0,0,0.02);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        .card:active { transform: scale(0.98); }
+        .card img {
+            width: 100%; height: 110px;
+            object-fit: cover; border-radius: 8px;
+        }
+        .card h4 { margin: 8px 0 4px; font-size: 14px; }
+        .card p { color: var(--button-color); font-weight: bold; margin: 0 0 8px; font-size: 13px; }
+        .btn {
+            background: var(--button-color);
+            color: var(--button-text-color);
+            border: none; padding: 8px 12px;
+            border-radius: 6px; width: 100%;
+            cursor: pointer; font-size: 12px; font-weight: 600;
+        }
+        #order-form {
+            display: none;
+            background: rgba(0,0,0,0.03);
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; font-size: 12px; color: var(--hint-color); margin-bottom: 4px; }
+        input, textarea {
+            width: 100%; padding: 10px;
+            border: 1px solid #ccc; border-radius: 8px;
+            box-sizing: border-box; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🎨 Poligrafiya Katalogi</h2>
+    
+    <div class="grid">
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=300" alt="Taklifnoma">
+            <h4>Premium Taklifnoma</h4>
+            <p>12 000 UZS</p>
+            <button class="btn" onclick="selectItem('Premium Taklifnoma', 12000)">Tanlash</button>
+        </div>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=300" alt="Minimalist">
+            <h4>Minimalist Style</h4>
+            <p>8 000 UZS</p>
+            <button class="btn" onclick="selectItem('Minimalist Style', 8000)">Tanlash</button>
+        </div>
+    </div>
+
+    <div id="order-form">
+        <h3 style="margin-top: 0; font-size: 16px;">✏️ Buyurtma tafsilotlari</h3>
+        <div class="form-group">
+            <label>Tanlangan Mahsulot:</label>
+            <input type="text" id="product_name" readonly style="background: #eee;">
+        </div>
+        <div class="form-group">
+            <label>Kelin va Kuyov ismlari:</label>
+            <input type="text" id="names" placeholder="Masalan: Ali va Laylo">
+        </div>
+        <div class="form-group">
+            <label>Sana va Manzil:</label>
+            <textarea id="details" rows="3" placeholder="Sana, soat va restoran nomi..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Mini App'ni to'liq ekranga yoyish
+
+        let selectedProduct = null;
+
+        function selectItem(name, price) {
+            selectedProduct = { name, price };
+            document.getElementById('product_name').value = `${name} (${price} UZS)`;
+            document.getElementById('order-form').style.display = 'block';
+            
+            // Telegram pastki tugmasini (MainButton) yoqish
+            tg.MainButton.setText("BUYURTMANI YUBORISH");
+            tg.MainButton.show();
+        }
+
+        // Pastdagi yuborish tugmasi bosilganda
+        tg.onEvent('mainButtonClicked', function(){
+            const names = document.getElementById('names').value;
+            const details = document.getElementById('details').value;
+
+            if(!names || !details) {
+                tg.showAlert("Iltimos, barcha maydonlarni to'ldiring!");
+                return;
+            }
+
+            const data = {
+                product: selectedProduct.name,
+                price: selectedProduct.price,
+                names: names,
+                details: details
+            };
+
+            // Ma'lumotni Telegram Botga yuborish
+            tg.sendData(JSON.stringify(data));
+        });
+    </script>
+</body>
+</html>
